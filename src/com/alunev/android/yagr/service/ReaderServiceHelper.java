@@ -1,5 +1,11 @@
 package com.alunev.android.yagr.service;
 
+import java.util.List;
+
+import oauth.signpost.exception.OAuthCommunicationException;
+import oauth.signpost.exception.OAuthExpectationFailedException;
+import oauth.signpost.exception.OAuthMessageSignerException;
+import oauth.signpost.exception.OAuthNotAuthorizedException;
 import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
@@ -44,8 +50,23 @@ public class ReaderServiceHelper {
 
     /**
      * Obtain and store auth token
+     * @throws OAuthCommunicationException
+     * @throws OAuthExpectationFailedException
+     * @throws OAuthNotAuthorizedException
+     * @throws OAuthMessageSignerException
      */
-    public void initializeAuthentication(IReaderListener callback) {
+    public void initializeAuthentication(IReaderListener callback)
+        throws OAuthMessageSignerException, OAuthNotAuthorizedException,
+            OAuthExpectationFailedException, OAuthCommunicationException {
         readerService.initializeAuthentication(context, callback);
+    }
+
+    /**
+     * Get List of feeds.
+     * @param callback
+     * @return
+     */
+    public List<String> getReaderFeeds(IReaderListener callback) {
+        return readerService.getReaderFeeds(context, callback);
     }
 }

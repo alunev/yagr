@@ -1,6 +1,10 @@
 package com.alunev.android.yagr.activity;
 
 
+import oauth.signpost.exception.OAuthCommunicationException;
+import oauth.signpost.exception.OAuthExpectationFailedException;
+import oauth.signpost.exception.OAuthMessageSignerException;
+import oauth.signpost.exception.OAuthNotAuthorizedException;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,7 +34,22 @@ public class WelcomeActivity extends Activity implements IReaderListener {
             public void onClick(View v) {
                 // activate button clicked - so activate(perform initial authentication)
                 // i.e. obtain auth key that we need
-                ReaderServiceHelper.getInstance().initializeAuthentication(WelcomeActivity.this);
+
+                try {
+                    ReaderServiceHelper.getInstance().initializeAuthentication(WelcomeActivity.this);
+                } catch (OAuthMessageSignerException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (OAuthNotAuthorizedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (OAuthExpectationFailedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (OAuthCommunicationException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
         });
 

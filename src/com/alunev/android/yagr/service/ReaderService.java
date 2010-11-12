@@ -1,26 +1,38 @@
 package com.alunev.android.yagr.service;
 
-import java.io.IOException;
+import java.util.List;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
+import oauth.signpost.OAuth;
+import oauth.signpost.OAuthConsumer;
+import oauth.signpost.OAuthProvider;
+import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
+import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
+import oauth.signpost.exception.OAuthCommunicationException;
+import oauth.signpost.exception.OAuthExpectationFailedException;
+import oauth.signpost.exception.OAuthMessageSignerException;
+import oauth.signpost.exception.OAuthNotAuthorizedException;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
+import android.net.Uri;
 import android.os.Binder;
-import android.os.Bundle;
 import android.os.IBinder;
 
 import com.alunev.android.yagr.info.Settings;
+import com.alunev.android.yagr.processor.ReaderProcessor;
 
 
 public class ReaderService extends Service {
     private final ReaderServiceBinder readerBinder = new ReaderServiceBinder();
+
+    private static final String CONSUMER_KEY = "<YOUR KEY>";
+    private static final String CONSUMER_SECRET = "<YOUR SECRET>";
+    private static final String APPNAME = "Yagr";
+    private static final String scope = "http://www.google.com/reader/api";
+    public static final String reqtokenURL = "https://www.google.com/accounts/OAuthGetRequestToken";
+    public static final String authorizeURL = "https://www.google.com/accounts/OAuthAuthorizeToken";
+    public static final String accessTokenURL = "https://www.google.com/accounts/OAuthGetAccessToken";
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -58,59 +70,34 @@ public class ReaderService extends Service {
     }
 
     public class ReaderServiceBinder extends Binder implements IReader {
-        public void initializeAuthentication(final Context context, IReaderListener callback) {
-            // perform stuff in separate thread
-            Runnable worker = new Runnable() {
-                public void run() {
-                    // here we do authentication, request access to google reader
-                    AccountManager am = AccountManager.get(context);
-                    Account[] accounts = am.getAccountsByType("com.google");
+        public void initializeAuthentication(final Context context, IReaderListener callback)
+                throws OAuthMessageSignerException, OAuthNotAuthorizedException,
+                    OAuthExpectationFailedException, OAuthCommunicationException {
+            OAuthConsumer oac = new CommonsHttpOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
+            OAuthProvider oap = new CommonsHttpOAuthProvider(
+                reqtokenURL+"?scope="+scope+"&"+"xoauth_displayname="+APPNAME,
+                accessTokenURL,
+                authorizeURL+"?hl=en&btmpl=mobile");
 
-                    // we leave system to handle situation when user has to enter login/password
-                    AccountManagerFuture<Bundle> accountManagerFuture = am.getAuthToken(
-                            accounts[0], "reader", true, null, null);
+            String url = oap.retrieveRequestToken(oac, OAuth.OUT_OF_BAND);
+            System.out.println("Open this URL in browser and Grant Access to "+ APPNAME + " : "+url);
 
-                    Bundle authTokenBundle = null;
-                    try {
-                        authTokenBundle = accountManagerFuture.getResult();
-                    } catch (OperationCanceledException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (AuthenticatorException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(url + "&oauth_callback="
+                    + "com.alunev.android.yagr-android-app:///"));
+            startActivity(i);
 
-                    String authToken = null;
-                    if (authTokenBundle != null) {
-                        authToken = authTokenBundle.get(AccountManager.KEY_AUTHTOKEN).toString();
-                    }
+            String accessToken = oac.getToken();
+            String tokenSecret = oac.getTokenSecret();
 
-                    // save/update token
-                    if (authToken != null) {
-                        SharedPreferences preferences = getApplicationContext().
-                            getSharedPreferences(Settings.SETTINGS_FILE_NAME, MODE_PRIVATE);
-                        Editor editor = preferences.edit();
-                        editor.putString(Settings.READER_AUTH_TOKEN, authToken);
-                        editor.commit();
-                    }
-                }
-            };
+            callback.done();
+        }
 
-            Thread workerThread = new Thread(worker);
-            workerThread.start();
+        public List<String> getReaderFeeds(final Context context, IReaderListener callback) {
+            SharedPreferences preferences = getApplicationContext().
+            getSharedPreferences(Settings.SETTINGS_FILE_NAME, MODE_PRIVATE);
 
-            // wait till done and then notify callbacker
-            try {
-                workerThread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } finally {
-                callback.done();
-            }
+            return new ReaderProcessor().getReaderFeeds(preferences.getString(Settings.READER_AUTH_TOKEN, null));
         }
     }
 }

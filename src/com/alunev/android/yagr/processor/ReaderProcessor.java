@@ -1,5 +1,11 @@
 package com.alunev.android.yagr.processor;
 
-public class ReaderProcessor {
+import java.util.List;
 
+import com.alunev.android.yagr.rest.RestClient;
+
+public class ReaderProcessor {
+    public List<String> getReaderFeeds(String authToken) {
+        return new RestClient().getReaderFeeds(authToken);
+    }
 }
