@@ -9,7 +9,12 @@ import oauth.signpost.exception.OAuthNotAuthorizedException;
 import android.content.Context;
 
 public interface IReader {
-    public void initializeAuthentication(Context context, IReaderListener callback)
+    public void initializeAuthentication(Context context, String url, IReaderListener callback)
+        throws OAuthMessageSignerException, OAuthNotAuthorizedException,
+            OAuthExpectationFailedException, OAuthCommunicationException;
+
+    public void finalizeAuthentication(Context context, IReaderListener callback,
+            String token, String verifCode)
         throws OAuthMessageSignerException, OAuthNotAuthorizedException,
             OAuthExpectationFailedException, OAuthCommunicationException;
 

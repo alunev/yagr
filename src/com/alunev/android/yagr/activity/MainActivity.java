@@ -5,9 +5,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import com.alunev.android.yagr.R;
 import com.alunev.android.yagr.info.ActivityIntents;
 import com.alunev.android.yagr.info.Settings;
+import com.alunev.android.yagr.service.ReaderServiceHelper;
 
 public class MainActivity extends Activity {
 
@@ -16,12 +16,19 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences preferences = getSharedPreferences(Settings.SETTINGS_FILE_NAME, MODE_WORLD_READABLE);
+        // initiate our service
+        ReaderServiceHelper.getInstance().init(getApplication());
+
+        // process to workflow
+        SharedPreferences preferences = getSharedPreferences(Settings.SETTINGS_FILE_NAME, MODE_PRIVATE);
         if (preferences == null || preferences.getBoolean(Settings.IS_FIRST_LAUNCH, true)) {
+            // launch authentication wizard
             Intent startSetup = new Intent(ActivityIntents.welcomeIntentAction);
             startActivity(startSetup);
         } else {
-            setContentView(R.layout.main);
+            // launch main screen(feeds list view)
+            Intent startFeeds = new Intent(ActivityIntents.feedsIntentAction);
+            startActivity(startFeeds);
         }
     }
 }

@@ -27,10 +27,7 @@ public class WelcomeActivity extends Activity implements IReaderListener {
         final Button activateButton = (Button) findViewById(R.id.activateButton);
         final Button nextButton = (Button) findViewById(R.id.nextButton);
 
-        ReaderServiceHelper.getInstance().init(getApplication());
-
         activateButton.setOnClickListener(new OnClickListener() {
-            @Override
             public void onClick(View v) {
                 // activate button clicked - so activate(perform initial authentication)
                 // i.e. obtain auth key that we need
@@ -54,7 +51,6 @@ public class WelcomeActivity extends Activity implements IReaderListener {
         });
 
         nextButton.setOnClickListener(new OnClickListener() {
-            @Override
             public void onClick(View v) {
                 Intent startFeeds = new Intent(ActivityIntents.feedsIntentAction);
                 startActivity(startFeeds);
@@ -62,7 +58,6 @@ public class WelcomeActivity extends Activity implements IReaderListener {
         });
     }
 
-    @Override
     public void done() {
         final Button activateButton = (Button) findViewById(R.id.activateButton);
         final Button nextButton = (Button) findViewById(R.id.nextButton);

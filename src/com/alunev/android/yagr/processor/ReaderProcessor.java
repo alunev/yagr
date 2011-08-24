@@ -5,7 +5,7 @@ import java.util.List;
 import com.alunev.android.yagr.rest.RestClient;
 
 public class ReaderProcessor {
-    public List<String> getReaderFeeds(String authToken) {
-        return new RestClient().getReaderFeeds(authToken);
+    public List<String> getReaderFeeds(String authToken, String authSeret) {
+        return new RestClient().getReaderFeeds(authToken, authSeret);
     }
 }

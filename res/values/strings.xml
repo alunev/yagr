@@ -5,4 +5,6 @@
     <string name="hello">Hello World, YagrActivity!</string>
     <string name="welcome">Welcome</string>
     <string name="service">service</string>
+<string name="authSucess">Whoahoooo! Thank you, authentication successfull. Proceed to feeds list.</string>
+<string name="proceedToFeeds">At Last !</string>
 </resources>

@@ -4,90 +4,68 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.httpclient.Cookie;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpState;
-import org.apache.commons.httpclient.methods.PostMethod;
+import oauth.signpost.OAuthConsumer;
+import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
+import oauth.signpost.exception.OAuthCommunicationException;
+import oauth.signpost.exception.OAuthExpectationFailedException;
+import oauth.signpost.exception.OAuthMessageSignerException;
 
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
+import com.alunev.android.yagr.info.Settings;
 
 public class RestClient {
+    public List<String> getReaderFeeds(String authToken, String authSeret) {
+        OAuthConsumer consumer = new CommonsHttpOAuthConsumer(Settings.CONSUMER_KEY,
+                Settings.CONSUMER_SECRET);
+        consumer.setTokenWithSecret(authToken, authSeret);
 
-    public List<String> getReaderFeeds(String authToken) {
-        List<String> res = new ArrayList<String>();
-
-        return res;
-    }
-
-    public List<String> getReaderFeeds1(String authToken) {
-        HttpClient httpClient = new HttpClient();
-/*
-        HttpMethod method = new GetMethod("http://www.google.com/reader/atom/subscription/list?output=xml&ck="
-            + System.currentTimeMillis() + "&client=apachehttpclient");
-
-        HttpMethod method = new GetMethod("http://www.google.com/reader/api/0/subscription/list"
-                + "?output=xml&" + "&ck=" + System.currentTimeMillis() + "&client=123123123");
-                */
-
-        HttpMethod method = new PostMethod("https://www.google.com/reader/atom/user/-/state/com.google/read");
-        // HttpMethod method = new PostMethod("http://www.google.com/reader/atom/feed/" +
-        // 	    "http://xkcd.com/rss.xml?n=17&ck=1169900000&xt=user/-/state/com.google/read");
-
-        // Cookie
-        HttpState state = new HttpState();
-        Cookie cookie = new Cookie(".google.com", "SID", authToken, "/", 1600000000, true);
-        state.addCookie(cookie);
-        httpClient.setState(state);
-
-        /*
-        method.getParams().setCookiePolicy(CookiePolicy.IGNORE_COOKIES);
-        method.setRequestHeader("Cookie", "SID=" + authToken
-            + ";domain=.google.com"
-            + ";path=/"
-            + ";expires=1600000000");
-
-        method.setRequestHeader("Cookie", "domain=.google.com");
-        method.setRequestHeader("Cookie", "path=/");
-        method.setRequestHeader("Cookie", "expires=1600000000");
-        */
-
-        /*
-        HttpMethod method = new PostMethod("https://www.google.com/accounts/ClientLogin");
-        method.getParams().setParameter("accountType", "GOOGLE");
-        method.getParams().setParameter("Email", "antonluneyv@gmail.com");
-        method.getParams().setParameter("service", "gr");
-        method.getParams().setParameter("logintoken", authToken);
-        */
+        HttpUriRequest request = new HttpGet(ReaderAPICalls.LIST_FEEDS + "?"
+                + ReaderAPIParams.OUTPUT + "json&"
+                + ReaderAPIParams.TIMESTAMP + System.currentTimeMillis() + "&"
+                + ReaderAPIParams.CLIENT + ReaderAPIParams.VALUE_CLIENT);
 
         try {
-            int httpRes = httpClient.executeMethod(method);
-        } catch (HttpException e) {
+            consumer.sign(request);
+        } catch (OAuthMessageSignerException e) {
             e.printStackTrace();
-        } catch (IOException e) {
+        } catch (OAuthExpectationFailedException e) {
+            e.printStackTrace();
+        } catch (OAuthCommunicationException e) {
             e.printStackTrace();
         }
 
-        String redirect = "https://www.google.com/accounts/ServiceLogin?service=reader&passive=1209600&continue=https://www.google.com/reader/atom/user/-/state/com.google/read&followup=https://www.google.com/reader/atom/user/-/state/com.google/read";
-        method = new PostMethod(redirect);
-        httpClient.setState(state);
-
+        HttpClient httpClient = new DefaultHttpClient();
+        String response = null;
+        ResponseHandler<String> responseHandler = new BasicResponseHandler();
         try {
-            int httpRes = httpClient.executeMethod(method);
-        } catch (HttpException e) {
+            response = httpClient.execute(request, responseHandler);
+        } catch (ClientProtocolException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         List<String> res = new ArrayList<String>();
+        JSONTokener tokener = new JSONTokener(response);
         try {
-            byte[] responseBody = method.getResponseBody();
-            res.add(new String(responseBody));
-        } catch (IOException e) {
+            JSONObject obj = (JSONObject) tokener.nextValue();
+            JSONArray subscriptions = obj.getJSONArray("subscriptions");
+            for (int i = 0; i < subscriptions.length(); i++) {
+                res.add(subscriptions.getJSONObject(i).getString("title"));
+            }
+        } catch (JSONException e) {
             e.printStackTrace();
-        } finally {
-            method.releaseConnection();
         }
 
         return res;

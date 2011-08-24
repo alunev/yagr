@@ -3,6 +3,8 @@
       package="com.alunev.android.yagr"
       android:versionCode="1"
       android:versionName="1.0">
+    <uses-sdk android:minSdkVersion="5" android:targetSdkVersion="5"/>
+
     <!-- <permission android:name="android.permission.ACCOUNT_MANAGER"/> -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
     <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
@@ -28,7 +30,7 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="com.alunev.android.yagr-android-app"/>
+                <data android:scheme="com-alunev-android-yagr-android-app"/>
             </intent-filter>
         </activity>
 
