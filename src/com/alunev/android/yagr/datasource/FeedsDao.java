@@ -1,4 +1,4 @@
-package com.alunev.android.yagr.ds;
+package com.alunev.android.yagr.datasource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.alunev.android.yagr.ds.info.Feed;
+import com.alunev.android.yagr.datasource.info.Feed;
 
 public class FeedsDao {
     private SQLiteDatabase db;
@@ -81,5 +81,12 @@ public class FeedsDao {
         }
 
         return allFeeds;
+    }
+
+    public void insertManyFeeds(List<Feed> feeds) {
+        // TODO: should use some transactions
+        for (Feed feed : feeds) {
+            insertNewFeed(feed);
+        }
     }
 }

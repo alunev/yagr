@@ -22,10 +22,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import com.alunev.android.yagr.datasource.info.Feed;
 import com.alunev.android.yagr.info.Settings;
 
 public class RestClient {
-    public List<String> getReaderFeeds(String authToken, String authSeret) {
+    public List<Feed> getReaderFeeds(String authToken, String authSeret) {
         OAuthConsumer consumer = new CommonsHttpOAuthConsumer(Settings.CONSUMER_KEY,
                 Settings.CONSUMER_SECRET);
         consumer.setTokenWithSecret(authToken, authSeret);
@@ -56,18 +57,18 @@ public class RestClient {
             e.printStackTrace();
         }
 
-        List<String> res = new ArrayList<String>();
+        List<Feed> feeds = new ArrayList<Feed>();
         JSONTokener tokener = new JSONTokener(response);
         try {
             JSONObject obj = (JSONObject) tokener.nextValue();
             JSONArray subscriptions = obj.getJSONArray("subscriptions");
             for (int i = 0; i < subscriptions.length(); i++) {
-                res.add(subscriptions.getJSONObject(i).getString("title"));
+                feeds.add(new Feed(subscriptions.getJSONObject(i).getString("title")));
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        return res;
+        return feeds;
     }
 }

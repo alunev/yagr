@@ -8,6 +8,8 @@ import oauth.signpost.exception.OAuthMessageSignerException;
 import oauth.signpost.exception.OAuthNotAuthorizedException;
 import android.content.Context;
 
+import com.alunev.android.yagr.datasource.info.Feed;
+
 public interface IReader {
     public void initializeAuthentication(Context context, String url, IReaderListener callback)
         throws OAuthMessageSignerException, OAuthNotAuthorizedException,
@@ -18,5 +20,5 @@ public interface IReader {
         throws OAuthMessageSignerException, OAuthNotAuthorizedException,
             OAuthExpectationFailedException, OAuthCommunicationException;
 
-    public List<String> getReaderFeeds(Context context, IReaderListener callback);
+    public List<Feed> getReaderFeeds(Context context, IReaderListener callback);
 }

@@ -6,8 +6,8 @@ import java.util.List;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 
-import com.alunev.android.yagr.ds.FeedsDao;
-import com.alunev.android.yagr.ds.info.Feed;
+import com.alunev.android.yagr.datasource.FeedsDao;
+import com.alunev.android.yagr.datasource.info.Feed;
 
 public class FeedsDaoTest extends AndroidTestCase {
     private SQLiteDatabase db;
@@ -68,5 +68,20 @@ public class FeedsDaoTest extends AndroidTestCase {
         List<Feed> allFeeds = dao.getAllFeeds();
 
         assertTrue(allFeeds.containsAll(insertedFeeds));
+    }
+
+    public void testInsertAllFeeds() {
+        List<Feed> feeds = new ArrayList<Feed>();
+        feeds.add(new Feed(1, "asd0", 2));
+        feeds.add(new Feed(2, "asd1", 2));
+        feeds.add(new Feed(3, "asd2", 2));
+
+        FeedsDao dao = new FeedsDao(db);
+
+        dao.insertManyFeeds(feeds);
+
+        List<Feed> allFeeds = dao.getAllFeeds();
+
+        assertTrue(allFeeds.containsAll(feeds));
     }
 }

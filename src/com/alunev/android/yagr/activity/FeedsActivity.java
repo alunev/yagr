@@ -1,5 +1,6 @@
 package com.alunev.android.yagr.activity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.ListActivity;
@@ -9,9 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.alunev.android.yagr.R;
-import com.alunev.android.yagr.ds.FeedsDao;
-import com.alunev.android.yagr.ds.FeedsOpenHelper;
-import com.alunev.android.yagr.ds.info.Feed;
+import com.alunev.android.yagr.datasource.info.Feed;
 import com.alunev.android.yagr.service.IReaderListener;
 import com.alunev.android.yagr.service.ReaderServiceHelper;
 
@@ -19,20 +18,18 @@ public class FeedsActivity extends ListActivity implements IReaderListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        FeedsDao dao = new FeedsDao((new FeedsOpenHelper(this)).getFreshDatabase());
+        List<String> labels = loadFeeds();
 
-        // load feeds from Google Reader
-        List<String> res = ReaderServiceHelper.getInstance().getReaderFeeds(this);
+        setListAdapter(new ArrayAdapter<String>(this, R.layout.list_item, labels.toArray(new String[]{})));
+    }
 
-        // try to save to DB
-        Feed feedInfo = new Feed();
-        for (String str : res) {
-            feedInfo.setTitle(str);
-            feedInfo.setUnreadCount(0);
-            dao.insertNewFeed(feedInfo);
+    private List<String> loadFeeds() {
+        List<Feed> feeds = ReaderServiceHelper.getInstance().getReaderFeeds(this);
+        List<String> labels = new ArrayList<String>();
+        for (Feed feed : feeds) {
+            labels.add(feed.getTitle());
         }
-
-        setListAdapter(new ArrayAdapter<String>(this, R.layout.list_item, res.toArray(new String[]{})));
+        return labels;
     }
 
     public void done() {

@@ -19,6 +19,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.IBinder;
 
+import com.alunev.android.yagr.datasource.info.Feed;
 import com.alunev.android.yagr.info.Settings;
 
 public class ReaderServiceHelper {
@@ -109,7 +110,7 @@ public class ReaderServiceHelper {
      * @param callback
      * @return
      */
-    public List<String> getReaderFeeds(IReaderListener callback) {
+    public List<Feed> getReaderFeeds(IReaderListener callback) {
         return readerService.getReaderFeeds(context, callback);
     }
 }

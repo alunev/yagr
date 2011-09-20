@@ -1,4 +1,4 @@
-package com.alunev.android.yagr.ds;
+package com.alunev.android.yagr.datasource;
 
 import java.io.File;
 

@@ -1,4 +1,5 @@
-package com.alunev.android.yagr.ds.info;
+package com.alunev.android.yagr.datasource.info;
+
 
 public class Feed {
     int id;
@@ -12,6 +13,10 @@ public class Feed {
         this.id = id;
         this.title = title;
         this.unreadCount = unreadCount;
+    }
+
+    public Feed(String title) {
+        this.title = title;
     }
 
     public int getId() {

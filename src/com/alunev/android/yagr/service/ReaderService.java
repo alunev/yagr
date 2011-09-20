@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 
+import com.alunev.android.yagr.datasource.info.Feed;
 import com.alunev.android.yagr.info.Settings;
 import com.alunev.android.yagr.processor.ReaderProcessor;
 
@@ -76,7 +77,7 @@ public class ReaderService extends Service {
             callback.done();
         }
 
-        public List<String> getReaderFeeds(final Context context, IReaderListener callback) {
+        public List<Feed> getReaderFeeds(final Context context, IReaderListener callback) {
             SharedPreferences preferences = getApplicationContext().
                 getSharedPreferences(Settings.SETTINGS_FILE_NAME, MODE_PRIVATE);
 
