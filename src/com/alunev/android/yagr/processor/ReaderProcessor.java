@@ -12,10 +12,14 @@ import com.alunev.android.yagr.rest.RestClient;
 public class ReaderProcessor {
     private Context context;
 
+    public ReaderProcessor(Context context) {
+        this.context = context;
+    }
+
     public List<Feed> getReaderFeeds(String authToken, String authSeret) {
         List<Feed> feeds = new RestClient().getReaderFeeds(authToken, authSeret);
 
-        FeedsDao feedsDao = new FeedsDao(new FeedsOpenHelper(context).getReadableDatabase());
+        FeedsDao feedsDao = new FeedsDao(new FeedsOpenHelper(context).getWritableDatabase());
         feedsDao.insertManyFeeds(feeds);
 
         return feeds;

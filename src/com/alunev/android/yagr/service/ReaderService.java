@@ -2,10 +2,6 @@ package com.alunev.android.yagr.service;
 
 import java.util.List;
 
-import oauth.signpost.exception.OAuthCommunicationException;
-import oauth.signpost.exception.OAuthExpectationFailedException;
-import oauth.signpost.exception.OAuthMessageSignerException;
-import oauth.signpost.exception.OAuthNotAuthorizedException;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -58,9 +54,7 @@ public class ReaderService extends Service {
     }
 
     public class ReaderServiceBinder extends Binder implements IReader {
-        public void initializeAuthentication(final Context context, String url, IReaderListener callback)
-                throws OAuthMessageSignerException, OAuthNotAuthorizedException,
-                    OAuthExpectationFailedException, OAuthCommunicationException {
+        public void initializeAuthentication(final Context context, String url, IReaderListener callback) {
             Intent i = new Intent(Intent.ACTION_VIEW);
             i.setData(Uri.parse(url));
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -70,10 +64,8 @@ public class ReaderService extends Service {
         }
 
         public void finalizeAuthentication(final Context context, IReaderListener callback,
-                String token, String verifCode)
-            throws OAuthMessageSignerException, OAuthNotAuthorizedException,
-                OAuthExpectationFailedException, OAuthCommunicationException {
-            // just stub
+                String token, String verifCode) {
+
             callback.done();
         }
 
@@ -81,7 +73,7 @@ public class ReaderService extends Service {
             SharedPreferences preferences = getApplicationContext().
                 getSharedPreferences(Settings.SETTINGS_FILE_NAME, MODE_PRIVATE);
 
-            return new ReaderProcessor().getReaderFeeds(
+            return new ReaderProcessor(ReaderService.this).getReaderFeeds(
                     preferences.getString(Settings.READER_AUTH_TOKEN, null),
                     preferences.getString(Settings.READER_AUTH_SECRET, null));
         }
