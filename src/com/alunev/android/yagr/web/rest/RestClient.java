@@ -1,4 +1,4 @@
-package com.alunev.android.yagr.rest;
+package com.alunev.android.yagr.web.rest;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,6 +26,10 @@ import com.alunev.android.yagr.datasource.info.Feed;
 import com.alunev.android.yagr.info.Settings;
 
 public class RestClient {
+
+
+    
+
     public List<Feed> getReaderFeeds(String authToken, String authSeret) {
         OAuthConsumer consumer = new CommonsHttpOAuthConsumer(Settings.CONSUMER_KEY,
                 Settings.CONSUMER_SECRET);

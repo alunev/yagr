@@ -1,4 +1,4 @@
-package com.alunev.android.yagr.rest;
+package com.alunev.android.yagr.web.rest;
 
 public class ReaderAPIParams {
     // parameters names

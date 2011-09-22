@@ -8,6 +8,5 @@ public final class Settings {
     public static final String READER_AUTH_SECRET = "readerAuthSecret";
 
     public static final String CONSUMER_KEY = "anonymous";
-
     public static final String CONSUMER_SECRET = "anonymous";
 }

@@ -4,6 +4,6 @@
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="lib" path="/home/red/.m2/repository/oauth/signpost/signpost-commonshttp4/1.2.1.1/signpost-commonshttp4-1.2.1.1.jar"/>
-	<classpathentry kind="lib" path="/home/red/.m2/repository/oauth/signpost/signpost-core/1.2.1.1/signpost-core-1.2.1.1.jar"/>
+	<classpathentry kind="lib" path="/home/red/.m2/repository/oauth/signpost/signpost-core/1.2.1.1/signpost-core-1.2.1.1.jar" sourcepath="/home/red/.m2/repository/oauth/signpost/signpost-core/1.2.1.1/signpost-core-1.2.1.1-sources.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
